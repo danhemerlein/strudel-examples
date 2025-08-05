@@ -51,10 +51,14 @@ const bd = s('[bd - - -] [bd - - -] [bd - - -] [bd - - -]')
   .gain('1.15')
 const sd = s('- sd - sd').n(6).gain('.4')
 const sd_2 = s('- sd - sd').gain(1).n(3).bank(dbank909)
-const cp_2 = s('cp:4!16?'.degradeBy(slider(0.116, 0, 1)).ribbon(19, 2))
+const cp_2 = s('cp:4!16?')
+  .degradeBy(slider(0.116, 0, 1))
+  .ribbon(19, 2)
   .bank(dbank808)
   .gain(0.5)
-const bd_2 = s('bd!16?'.degradeBy(slider(0.749, 0, 1)).ribbon(40, 2))
+const bd_2 = s('bd!16?')
+  .degradeBy(slider(0.749, 0, 1))
+  .ribbon(40, 2)
   .n(irand(5).ribbon(200, 2))
   .bank(dbank909)
 samples('bubo:fox')
@@ -63,7 +67,6 @@ const run_2 = n(run(16))
   .s('ftabla')
   .early(2 / 4)
   .sometimes(mul(speed('3'.sometimesBy(1, (x) => x.ply('3 | 1.5 | 2')))))
-// .jux(iter(4)).gain(.2);
 
 // bass
 const bass = note(bass_part)
@@ -135,14 +138,15 @@ const bg_pattern = stack(
 
 const drums = stack(
   // bd,
-  // bd_2,
+  bd_2,
   // sd,
-  // sd_2,
+  sd_2,
   cp_2,
   // oh,
   hh_2,
-  run_2,
-  hh.phaser(0.3)
+  run_2
+  // hh
+  // .phaser(0.3),
 )
 // .phaser(0.3)
 // .phaserdepth("<0 .05 .075 .1 .1 .075 .05 0>")
@@ -162,7 +166,8 @@ const verse = s('giveittome')
   .phaser(4)
   .room(0.5)
   .sometimesBy(0.5, mul(speed('-1')))
-  .lpf(slider(6500, 0, 20000))
+  .lpf(slider(10020, 0, 20000))
+  .gain(2)
 
 const amen_break = s('swat')
   .fit()
@@ -224,9 +229,9 @@ const one = stack(
 
 const two = stack(
   amen_break,
-  crate_drums,
-  // pad,
-  // piano,
+  // crate_drums,
+  pad,
+  piano,
   verse
 )
 
