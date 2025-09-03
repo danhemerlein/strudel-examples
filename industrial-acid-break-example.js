@@ -1,0 +1,31 @@
+samples('github:switchangel/breaks')
+samples('github:tidalcycles/uzu-drumkit')
+
+setCps(145/60/4)
+
+$: s("bd:2!4")
+$: s("oh:2").beat("1,3,5,7",8)
+$: s("white!16").decay(tri.range(0.03, 0.08).fast(2))
+  .lpf(sine.range(16000, 20000).fast(2))
+  .almostNever(ply("2 | 3 | 4"))
+  .crush(4)
+  .gain(.4)
+
+$bass: n(irand(10).sub(7).seg(16)).scale("c:minor")
+  .rib(26,1)
+  .distort("2.2:.3")
+  .s("sawtooth, sqaure")
+  .lpf(slider(3360,0,5000))
+  .lpenv(slider(0.712,0,8))
+  .lpq(2).lpq(12).orbit(12)
+
+$: s("supersaw").detune(1).rel(5).beat(2,64).slow(4).fm("2").fmh("2.04").gain(0.6)
+
+$: s("breaks/2").fit()
+  .scrub(irand(16).div(16).seg(8).rib("<1>", 1))
+  .n(irand(5).rib(31, 1))
+  .decay("0.2")
+  // .almostNever(ply("2"))
+  .hpf(500)
+  .lpf(2500)
+  .distort("1.5:1")
