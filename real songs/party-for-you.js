@@ -11,6 +11,7 @@ setCps(158.92/60/4)
     let delta = e.rawValue < 64 ? e.rawValue : e.rawValue - 128
 
     if (e.controller.number === 71) {
+      // Relative encoder: 1-64 = clockwise, 65-127 = counter-clockwise
       let delta = e.rawValue < 64 ? e.rawValue : e.rawValue - 128
       filterValue = Math.max(0, Math.min(1, filterValue + delta * 0.01))
 
@@ -24,10 +25,6 @@ $: s("party-4-u:1").slow(8)
   // .chop(64).cut(1).loopAt(8)
   // .slice(16, "12 [12!8|13|110]").cut(1)
   .gain(1.5).room(1)
-
-_$: s("bd!16?").bank("RolandTR909")
-  .degradeBy(slider(0.402,0,1))
-  .ribbon(40,2).n(irand(5).ribbon(200,2))
 
 $: s("bd - - [bd bd] - bd bd bd").slow(2).bank("RolandTR909").room(0.7)
 $: s(`- - rolandtr626_cp -
