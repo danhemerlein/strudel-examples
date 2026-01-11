@@ -68,11 +68,9 @@ const hat = s("hh").ply(16).stretch(0).lfo({da:2}).postgain("[18 16 18 16] [18 1
 
 let riser = s("gwf_im:24").speed(-3.7).postgain(1.9)
 
-
 $: arrange(
   [2, stack(bd, oh)],
-  [1, stack(bd, oh, intro)],
-  [1, stack(bd, oh, intro, riser)],
+  [2, stack(bd, oh, intro)],
   [2, stack(bd, oh, intro, hi)],
   [4, stack(bd, oh, intro, hi, bass)],
   [8, stack(bass, verse)],
