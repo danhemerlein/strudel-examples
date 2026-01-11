@@ -1,4 +1,4 @@
-
+// https://discord.com/channels/779427371270275082/779744296936275991/1458998771697586409
 
 setcpm(130/4)
 
@@ -17,6 +17,13 @@ let markovtables = {
   [[  0.2,  .2,  .6],  // bd
    [ .3,   .3,  .4],  // sd
    [ .6,  .1,   .3]]  // hh
+
+// , 'chords':
+//   [[  .2,  .2,  .4,  .2],
+//    [ .5,   .3,  .2,  .1],
+//    [  0,   .2,   .7,  .1],
+//    [ .7,  .1,   .1,  .1]]
+
 }
 
 const markov = register('markov', (id, pat) => pat.withHap((hap)=> {
@@ -48,7 +55,7 @@ const filtval = register('filtval', (key, val, func, pat) => {
   );
 });
 
-$: s(rand.segment(1).markov('drums').pick(["bd:5", "sd:1", "hh:3"])).bank("noe").fast("16@3 32")
+$: s(rand.segment(1).markov('drums').pick(["bd:16","sd:15","hh:3"])).bank("noe").fast("16@3 32")
 .mask(brand.seg(16).rib(2345,1))
   .filtval("s", "bd", x => x.duck(2))
   .filtval("s", "sd", x => x.duck(2).room(0.6))
@@ -66,7 +73,7 @@ $: note("5 11 12")
 .s("wt_mecha")
   .wtphaserand("0 1 3 10")
   .wtdepth(rand.mul("4"))
-  .someCycles(x => x.unison(8).detune("14").lfo({s:"0.4 0.1",da:100}))
+  .someCycles(x => x.unison(8).detune("14").lfo({s:0.4,da:100}))
   .wtsync(irand(8).mul(2).rib(12,1))
   .wtshape("0 1 2")
   .sometimes(x => x.rev())
