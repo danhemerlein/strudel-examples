@@ -5,56 +5,54 @@ samples('github:mmmgarlic/randumsample')
 samples('github:bindbindbind/miscsamples/main/glitch_with_friends')
 
 let cc = await midin('Ableton Push 2 Live Port')
+let drums_energy = 500
+let bass_energy = 300
+let synth_energy = 500
+const chop_energy = ref(() => synth_energy * 1.25)
 
-  let drums_energy = 500
-  let bass_energy = 500
-  let synth_energy = 500
-  const chop_energy = ref(() => synth_energy * 1.25)
+if (!document.getElementById('energy-hud')) {
+  let hud = document.createElement('div')
+  hud.id = 'energy-hud'
+  hud.style.cssText = 'position:fixed;bottom:20px;right:20px;background:rgba(0,0,0,0.85);padding:10px;border-radius:6px;font-family:monospace;z-index:9999'
 
-  if (!document.getElementById('energy-hud')) {
-    let hud = document.createElement('div')
-    hud.id = 'energy-hud'
-    hud.style.cssText = 'position:fixed;bottom:20px;right:20px;background:rgba(0,0,0,0.85);padding:10px;border-radius:6px;font-family:monospace;z-index:9999'
+  const row = (id, label, min, max, val, disabled) =>
+    '<div style="margin-bottom:6px">' +
+    '<label style="color:#aaa;font-size:11px">' + label + '</label>' +
+    '<input id="' + id + '-slider" type="range" min="' + min + '" max="' + max + '" value="' + val + '"' + (disabled
+ ? ' disabled' : '') + ' style="width:160px;display:block;margin:2px 0">' +
+    '<span id="' + id + '-val" style="color:#0ff;font-size:11px">' + Math.round(val) + '</span>' +
+    '</div>'
 
+  hud.innerHTML =
+    row('drums', 'DRUMS  CC71', 500, 10000, 500) +
+    row('bass',  'BASS   CC72', 300, 5000, 500) +
+    row('synth', 'SYNTH  CC73', 500, 5000, 500) +
+    row('chop',  'CHOP   (derived)', 500, 6250, 2630 * 1.25, true)
 
-    const row = (id, label, min, max, val, disabled) =>
-      '<div style="margin-bottom:6px">' +
-      '<label style="color:#aaa;font-size:11px">' + label + '</label>' +
-      '<input id="' + id + '-slider" type="range" min="' + min + '" max="' + max + '" value="' + val + '"' + (disabled
-   ? ' disabled' : '') + ' style="width:160px;display:block;margin:2px 0">' +
-      '<span id="' + id + '-val" style="color:#0ff;font-size:11px">' + Math.round(val) + '</span>' +
-      '</div>'
+  document.body.appendChild(hud)
+}
 
-    hud.innerHTML =
-      row('drums', 'DRUMS  CC71', 0, 3000, 500) +
-      row('bass',  'BASS   CC72', 1000, 5000, 500) +
-      row('synth', 'SYNTH  CC73', 0, 5000, 500) +
-      row('chop',  'CHOP   (derived)', 0, 6250, 2630 * 1.25, true)
+const updateHUD = (id, val) => {
+  document.getElementById(id + '-slider').value = val
+  document.getElementById(id + '-val').textContent = Math.round(val)
+}
 
-    document.body.appendChild(hud)
+WebMidi.getInputByName('Ableton Push 2 Live Port').addListener('controlchange', (e) => {
+  let delta = e.rawValue < 64 ? e.rawValue : e.rawValue - 128
+  if (e.controller.number === 71) {
+    drums_energy = Math.max(500, Math.min(10000, drums_energy + delta * 100))
+    updateHUD('drums', drums_energy)
   }
-
-  const updateHUD = (id, val) => {
-    document.getElementById(id + '-slider').value = val
-    document.getElementById(id + '-val').textContent = Math.round(val)
+  if (e.controller.number === 72) {
+    bass_energy = Math.max(300, Math.min(5000, bass_energy + delta * 30))
+    updateHUD('bass', bass_energy)
   }
-
-  WebMidi.getInputByName('Ableton Push 2 Live Port').addListener('controlchange', (e) => {
-    let delta = e.rawValue < 64 ? e.rawValue : e.rawValue - 128
-    if (e.controller.number === 71) {
-      drums_energy = Math.max(0, Math.min(10000, drums_energy + delta * 100))
-      updateHUD('drums', drums_energy)
-    }
-    if (e.controller.number === 72) {
-      bass_energy = Math.max(1000, Math.min(5000, bass_energy + delta * 30))
-      updateHUD('bass', bass_energy)
-    }
-    if (e.controller.number === 73) {
-      synth_energy = Math.max(500, Math.min(5000, synth_energy + delta * 150))
-      updateHUD('synth', synth_energy)
-      updateHUD('chop', synth_energy * 1.25)
-    }
-  })
+  if (e.controller.number === 73) {
+    synth_energy = Math.max(500, Math.min(5000, synth_energy + delta * 150))
+    updateHUD('synth', synth_energy)
+    updateHUD('chop', synth_energy * 1.25)
+  }
+})
 
 const bd = s("kick3_afterparty!4").fast("1 1 1 <1 1 1 2>")
   .lastOf(8, x => x.mask("0"))
@@ -153,7 +151,6 @@ const hi_2 = note(pick("<0!4 1 2 1 3>", synth_topline))
   .ply(2)
   .transpose("12")
   .sometimesBy(1, x=>x.decay("[0.1|0.07|0.08]"))
-  .sometimesBy(0.4, x=>x.jux("rev"))
   .delay(0.25)
   .room(1.2)
   .gain(0.5)
@@ -166,7 +163,6 @@ const chop = s("youngandnauseous:1").slow(4)
 .sometimesBy(.25, mul(speed("-1")))
 .ribbon("[11|7|15]", 1)
 .delay(.2)
-// .jux(rev)
 .lpf(ref(() => chop_energy))
 .hpf(1000)
 .gain(3)
@@ -197,8 +193,8 @@ let clicks = s("white").dec(0.01).seg(8).delay(1)
   .dt(time.mul(0.002).mod(1))
   .lfo({da:"<0 0.02 0.08 1>"})
   .dfb("<0.9 0.9 0.2 0>").diode(time.mod(1)).fast("<1 1 [2 2 8 16] 1>").fast(4).gain(.3)
-
 const riser = s("[gwf_im:24|gwf_im:27]").speed(-3.7).postgain(1.9).gain(.2);
+
 const impact = s("impact_femmebot").slow(8).postgain(8).gain(.2).room(2).rsize(2).delay(2.5).dec(0.1)
 const bd_oh = stack(bd, oh)
 const mastering = register('master', (pat) => pat.bus(1).dry(0))
@@ -211,25 +207,26 @@ $: arrange(
   //
   [4, stack(bd, bass, first_verse)], // first verse
   [4, stack(bd, bass, first_verse_two)], // first verse
-  [4, stack(bd, bass_two, hi, first_verse_three)], // first verse
-  [4, stack(bd, bass_two, hi, first_verse_four)], // first verse
-  //
-  [8, stack(bd, bass_two, main_synth)], // chorus
-  [7, stack(bd_oh, bass_two, main_synth, hi)], // chorus
-  //
-  [1, stack(riser, clicks).room(1.5).rsize(2).rfade(0.5)], // transition
-  //
-  [8, stack(impact, bd_oh, bass, hi_2, energy_hat)], // drop
-  [16, stack(impact, bd_oh, bass, hi_2, energy_hat, chop)], // drop
-  //
+  [4, stack(bd, bass_two, hi, first_verse_three, intro)], // first verse
+  [4, stack(bd, bass_two, hi, first_verse_four, intro)], // first verse
+
+  [8, stack(bd_oh, bass_two, main_synth, intro)], // chorus
+  [7, stack(bd_oh, bass_two, main_synth, hi, intro, energy_hat)],
+
+  [1, stack(riser, clicks).room(1.5).rsize(2).rfade(0.5)],
+  [8, stack(impact, bd_oh, bass, hi_2, energy_hat, back_beat)], // chorus
+  [16, stack(impact, bd_oh, bass, hi_2, energy_hat, back_beat, chop)], // drop
+
   [8, stack(bass_verse, hi, second_verse)], // second verse
-  //
-  [8, stack(bd_double, bass, main_synth)], // chorus
+
+  [8, stack(bd, bass, main_synth)], // chorus
   [7, stack(bd, bass, hi, back_beat, main_synth)], // chorus
   //
   [1, stack(riser, clicks).room(1.5).rsize(2).rfade(0.5)], // transition
   [8, stack(impact, bd_oh, bass, hi_2, energy_hat, back_beat)], // drop
   [32, stack(impact, bd_double, oh, bass, hi_2, energy_hat, back_beat, intro, chop)], // outro
+
+
 ).master()
 
 $: s("bus:1")
