@@ -18,7 +18,7 @@ const synth_topline = [
   a#3 g#3 g#3 f#3 f#3 e3 e3 d#3`
 ]
 
-$: s("youngandnauseous:1").slow(4).chop(16).cut(1)
+_$: s("youngandnauseous:1").slow(4).chop(16).cut(1)
 .sometimesBy(.5, ply("2"))
 .sometimesBy(.25, mul(speed("-1")))
 .ribbon("[11|7|15]", 1)
@@ -26,6 +26,11 @@ $: s("youngandnauseous:1").slow(4).chop(16).cut(1)
 .lpf(lpf)
 .hpf(1000)
 .gain(3)
+
+_$: n("<0 1 2 3>").s('youngandnauseous')
+  .slow(4)
+  .room(.5)
+  .lpf(lpf).hpf(500).gain(4)
 
 _$: s("moodring:2").slow(4)
 
