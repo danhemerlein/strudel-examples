@@ -25,8 +25,8 @@ const scrubStem = (sample, clipPattern, speedPattern, cutoffPattern, gain) =>
     .cutoff(cutoffPattern)
     .gain(gain);
 
-$: scrubStem("detonate",   .8,     "1,2",                  slider(0, 0, 10000, 500), 0.2)
-$: scrubStem("detonate:1", ".8|1", "<[1,2] 1.5>".slow(2),  slider(0, 0, 10000, 500), .5)
+$: scrubStem("detonate",   .8,     "1,2",                  slider(0, 0, 2500, 100), 0.2)
+$: scrubStem("detonate:1", ".8|1", "<[1,2] 1.5>".slow(2),  slider(100, 0, 5000, 100), .5)
 
 // "{0!2 .125!2 .25!2 .375!2 .5!2 .625!2 .75!2 .875!2}/8"
 $: s("detonate")
@@ -37,23 +37,23 @@ $: s("detonate")
     .pan(tri.fast(3))
     .room(1.5).rsize(1.3).rfade(1.3)
     .cutoff(sine.range(.2, .4).mul(100).pow(2).slow(4))
-    .cutoff(slider(500,0,5000,50))
+    .cutoff(slider(0,0,5000,50))
     .gain(.15)
 
-$: vocalChain("detonate",   slider(6700, 0, 15000, 50), .35)
+$: vocalChain("detonate",   slider(0, 0, 15000, 50), .35)
 $: vocalChain("detonate:1", slider(0, 0, 15000, 500), .5)
 $: vocalChain("detonate:2", slider(0, 0, 15000, 50), .35)
 $: vocalChain("detonate:3", slider(0, 0, 15000, 50), .35)
 
-$: stack(
+_$: stack(
     s("bd:5 bd:5 ~ ~ ~ ~ ~ bd:5 ~ ~ ~ ~ ~ ~ ~ ~").room(.2).duckorbit(2).duckattack(.1),
     s("~ sd:3 ~ sd:3").room(.1),
     // s("~*3 sd:9").slow(4).speed(-1).room(.5),
-    // s("~ ~ ~ perc perc:5 ~ perc:1 ~ ~ perc:13 perc:15 ~ ~ ~ [perc:27|perc:29] ~").degradeBy(.5).room(.35),
-  ).bank("noe").gain(.25).cutoff(slider(1000,0,10000,10))
+    s("~ ~ ~ perc perc:5 ~ perc:1 ~ ~ perc:13 perc:15 ~ ~ ~ [perc:27|perc:29] ~").degradeBy(0).room(.35),
+  ).bank("noe").gain(.25).cutoff(slider(2500,0,10000,10))
 
-$: sound("gm_taiko_drum:9").struct("x x [~ x] ~").room(.3).gain(1)
-//
+// $: sound("gm_taiko_drum:9").struct().room(.7).gain(.8)
+
 const _note = "<3 -2, 0 -6, -2 -1, 4 2>, [2 4 8 2]/3 <[2,0,-2]/2.5 [5,7 -4]>"
 const _scale = "<D:major B:minor>/4"
 
@@ -74,7 +74,7 @@ const bass_slow  = [4, 1];
 const bass_gain = [1.5, 1.5];
 const bass_part = "1";
 
-$:  note(pick(bass_notes, bass_part).sub(12))
+_$:  note(pick(bass_notes, bass_part).sub(12))
     .s("sine")
     .slow(pick(bass_slow, bass_part))
     .distort("2.2:.3")
@@ -95,7 +95,7 @@ $: note(_chords.slow(8))
   .phaser(.2)
   .delay(.5)
   // .room(.5).rsize(1)
-  .cutoff(slider(0,0,15000,50))
+  .cutoff(slider(4000,0,15000,50))
   // .hpf(500)
   .gain(.25)
 
@@ -107,7 +107,7 @@ $: note("[f#4,A4,D5,b4] [g4,A4,D5,b4] [a4,c#5,D5,e5] [a4,c#5,d5,f#5]".slow(4))
   .delay(.7)
   .pan(tri.fast(3))
   .o(2)
-  .cutoff(slider(4450,0,10000,50))
+  .cutoff(slider(5000,0,10000,50))
   .hpf(1000)
   .gain(.25)
 
@@ -124,13 +124,13 @@ $: timeCat([15, note("f#4 A4 D5").fast(5)], [1, note("b4")],
   .delay(0.25)
   .pan(tri.slow(2))
   .room("0.5 1".slow(2))
+  // .hpf(1000)
   .o(2)
-  .cutoff(slider(4100,0,10000,100))
+  .cutoff(slider(5000,0,10000,100))
   .gain(0.25)
 
 all(x => x
   // .glitch(rand)
   // .crush(8)
-  // .lpf(1000)
   // .hpf(500)
   ._scope())
