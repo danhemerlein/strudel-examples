@@ -7,6 +7,7 @@ samples('github:danhemerlein/samples')
 samples({
  wt_mecha: '_gabor.wav'
  }, 'https://raw.githubusercontent.com/kyrsive/some-wavetables/main/');
+await import('https://glossing.dev/scripts.js')
 
 // code by eefano
 
@@ -48,15 +49,16 @@ const filtval = register('filtval', (key, val, func, pat) => {
 });
 
 const vocalChain = (sample, cutoff = 5000, gain = 1) =>
-  s(sample).slow(16)
-      .slice(16, `<0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15>`)
-    .room(1.1).rsize(1.5).rfade(1.3)
-    .cutoff(cutoff)
-    .gain(gain);
 
-$: vocalChain("anthems", slider(11100, 0, 15000, 50), .3)
+s(sample).slow(16)
+    .slice(16, `<0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15>`)
+  .room(1.1).rsize(1.5).rfade(1.3)
+  .cutoff(cutoff)
+  .gain(gain);
 
-$: s("noe_perc").euclidRot(4,8,2).slow(4).speed(3).gain(.2)
+$: vocalChain("anthems", slider(6550, 500, 15000, 50), .3)
+
+$: s("noe_perc").euclidRot(4,8,2).slow(4).speed(3).gain(.5).room(.5)
 $: s("- - cp:12 -").bank("noe").room(0.2).gain(.2)
 
 $: stack(
@@ -68,5 +70,31 @@ $: stack(
     .diode(1.2).within(0.2,"0.5 0.6 0.3", x => x.speed(0.2).stretch(0.8).ply("1|2"))
     .transient(1).gain(.2)
 ).mask(time.segment(1).gte(16))
+
+const chord_a = '[b4,d#4,f#4]@2 [f4,a#4,d4] [f#4,a#4,[f5 d#5]]';
+const chord_b = '[a#4,c#4,g#5]@2 [g#4,b4,f#5]@2';
+const _chords = mini([chord_a, chord_a, chord_b, chord_b].join(' '));
+
+$: note(_chords.slow(8))
+  .s("wt_digital_echoes")
+  .strum(.05)
+  .glide(perlin.range(.03, .05))
+  .transpose(-12)
+  .arpu("0 1 2 3 4 -1 -2 -3".fast(2))
+  // .clip(.9)
+  // .late(.04)
+  // .pan(sine.fast(4))
+  .delay(.4)
+  .room(.4)
+
+const bassA = 'b1(1,1)@2 d2(1,1) f#1(1,1)';
+const bassB = 'a#1(1,1)@2 g#1(1,1)@2';
+const _bass = mini([bassA, bassA, bassB, bassB].join(' '));
+
+$: note(_bass.slow(8))
+  .s("supersaw,saw")
+  .detune(0, 1.07)
+  .room(1)
+  .pg(1)
 
 all(x => x.compressor("-20:20:10:.002:.02").gain(.2)._scope())
