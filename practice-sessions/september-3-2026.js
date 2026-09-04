@@ -1,0 +1,18 @@
+$: s('bd*4!3 bd*8'.slow(4)).bank('tr909')
+_$: s('~ sd').fast(2).bank('tr909')
+_$: s('compurhythm1000_hh!3')
+_$: s('~ oh').fast(4).bank('tr909').dec(0.4).postgain(0.5)
+_$: n('0 1 [4 3] 2 0 2 [~ 3] 4')
+  .sound('jazz')
+  .sometimes((x) => x.rev())
+
+_$: '[24 <36 44>]*4'
+  .off(perlin.range(1 / 256, -1 / 256), (x) => x.add(1))
+  .s('akaimpc60_rim')
+  .slow(2)
+  .note()
+  .sometimesBy(0.05, ply(2))
+  .lpf(sine.range(2400, 3200).segment(7).slow(2))
+  .speed(1.25)
+  .clip(0.6)
+  .postgain(0.6)
