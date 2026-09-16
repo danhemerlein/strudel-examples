@@ -1,5 +1,16 @@
+
+
 await import('https://glossing.dev/scripts.js')
 setCpm(90/4)
+
+// await initHydra({detectAudio:true})
+// let pattern = "<3 4 5 [6 7]*2>"
+// shape(H(pattern)).repeat()
+// .scrollY(
+//   ()=> a.fft[0]*.25
+// )
+// .add(src(o0).color(.71 ).scrollX(.005),.95)
+// .out(o0)
 
 const bd = s("{[bd bd] ~ [~ bd] [~ bd bd ~] }").n(1).bank("bossdr550")
 const sd = s("~ sd").fast(2).bank("bossdr550").room(.2)
@@ -24,12 +35,26 @@ const layer =  note("d4@2 [e4 [e4 f#4]]@2".slow(4)).sound("gm_synth_strings_1:4"
   .cutoff(1000)
   .postgain(.4)
 
+const hi = note("d4")
+  .struct("x ~ x ~ ~ x ~ x ~ x ~ x ~ x ~ ~")
+  .s("supersaw,wt_digital_echoes")
+  .transpose(12).crush("6|8")
+  .delay(.75)
+  .room("1.1|1.25")
+  .pan("<.5 .3 .5 .8>")
+  .lpf(sine.range(500,2000))
+
+// const trem = note("d4@2 [e4 [e4 f#4]]@2".slow(4)).sound("gm_tremolo_strings").transpose("0,12")
+
 const mastering = register('master', (pat) => pat.bus(1).dry(0))
 
-$: arrange(
-  [4, stack(bd, sd, sh, sd_2, oh, tm, cp, pad, layer)],
-).master()
+const verse = stack(bd, sd, sh, sd_2, oh, tm, cp, pad, layer)
+const pre = stack(hi, bd, sd, sh, sd_2, oh, tm, cp, pad, layer)
 
+$: arrange(
+  [16, verse],
+  [16, pre],
+).master()
 
 $: s("bus:1")
   compressor("-10:4:20:.01:.15")
